@@ -13,10 +13,10 @@ import pandas as pd
 import base64
 from PIL import Image
 import pdf2image
+import pdfplumber
 import google.generativeai as genai
 
 genai.configure(api_key=st.secrets["API_KEY"])
-POPPLER_PATH = r"C:\Users\Kunal\Downloads\Release-24.08.0-0 (1)\poppler-24.08.0\Library\bin"
 
 def get_gemini_response(input,pdf_content,prompt):
   model=genai.GenerativeModel('gemini-1.5-flash')
@@ -27,30 +27,13 @@ import base64
 import io
 from pdf2image import convert_from_bytes
 
-def input_pdf_setup(uploaded_file):
-    "PDF ->> JPG ->>> 64base filencoded"
-    if uploaded_file is not None:
-        # Convert PDF to list of images
-        images = convert_from_bytes(uploaded_file.read(), poppler_path=POPPLER_PATH)
-        # Take the first page
-        first_page = images[0]
 
-        # Convert image to byte array in JPEG format
-        img_byte_arr = io.BytesIO()
-        first_page.save(img_byte_arr, format="JPEG")
-        img_byte_arr = img_byte_arr.getvalue()
-
-        # Encode to base64
-        pdf_parts = [
-            {
-                "mime_type": "image/jpeg",
-                "data": base64.b64encode(img_byte_arr).decode()
-            }
-        ]
-        return pdf_parts
-    else:
-        raise FileNotFoundError("No file uploaded.")
-
+def extract_text_from_pdf(uploaded_file):
+    with pdfplumber.open(uploaded_file) as pdf:
+        text = ""
+        for page in pdf.pages:
+            text += page.extract_text() + "\n"
+        return text
 # streamlit App
 
 st.set_page_config(page_title="ATS Resume Expert")
@@ -114,7 +97,7 @@ Machine Learning 75%
 
 if submit1:
     if uploaded_file is not None:
-        pdf_content=input_pdf_setup(uploaded_file)
+        pdf_content=extract_text_from_pdf(uploaded_file)
         # input,pdf_content,prompt
         response=get_gemini_response(input_propt1,pdf_content,input_text)
         st.subheader("The Response is")
@@ -124,7 +107,7 @@ if submit1:
 
 elif submit2:
     if uploaded_file is not None:
-        pdf_content=input_pdf_setup(uploaded_file)
+        pdf_content=extract_text_from_pdf(uploaded_file)
         # input,pdf_content,prompt
         response=get_gemini_response(input_propt2,pdf_content,input_text)
         st.subheader("The Response is")
@@ -133,7 +116,7 @@ elif submit2:
         st.warning("Please Upload the resume")
 elif submit3:
     if uploaded_file is not None:
-        pdf_content=input_pdf_setup(uploaded_file)
+        pdf_content=extract_text_from_pdf(uploaded_file)
         # input,pdf_content,prompt
         response=get_gemini_response(input_propt3,pdf_content,input_text)
         st.subheader("The Response is")
@@ -143,7 +126,7 @@ elif submit3:
 
 elif submit4:
     if uploaded_file is not None:
-        pdf_content=input_pdf_setup(uploaded_file)
+        pdf_content=extract_text_from_pdf(uploaded_file)
         response =get_gemini_response(input_prompt4,pdf_content,input_text) 
         # Parse Gemini output
         subjects = []
