@@ -21,10 +21,6 @@ def get_gemini_response(input,pdf_content,prompt):
   response=model.generate_content([input,pdf_content,prompt])
   return response
 
-import base64
-import io
-from pdf2image import convert_from_bytes
-
 
 def extract_text_from_pdf(uploaded_file):
     with pdfplumber.open(uploaded_file) as pdf:
