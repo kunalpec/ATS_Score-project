@@ -4,15 +4,13 @@
 # prompts templates nedd to create
 # give data to user
 
-from dotenv import load_dotenv
-load_dotenv()
+
 import streamlit as st 
 import os
 import io
 import pandas as pd
 import base64
 from PIL import Image
-import pdf2image
 import pdfplumber
 import google.generativeai as genai
 
