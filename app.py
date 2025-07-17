@@ -16,7 +16,7 @@ import pdf2image
 import pdfplumber
 import google.generativeai as genai
 
-genai.configure(api_key=st.secrets["API_KEY"])
+genai.configure(api_key = st.secrets["api"]["API_KEY"])
 
 def get_gemini_response(input,pdf_content,prompt):
   model=genai.GenerativeModel('gemini-1.5-flash')
