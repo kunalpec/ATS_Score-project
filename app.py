@@ -15,7 +15,7 @@ from PIL import Image
 import pdf2image
 import google.generativeai as genai
 
-genai.configure(api_key=os.getenv("API_KEY"))
+genai.configure(api_key=st.secrets["API_KEY"])
 POPPLER_PATH = r"C:\Users\Kunal\Downloads\Release-24.08.0-0 (1)\poppler-24.08.0\Library\bin"
 
 def get_gemini_response(input,pdf_content,prompt):
